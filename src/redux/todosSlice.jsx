@@ -6,11 +6,33 @@ const nowISO = () => dayjs().toISOString();
 /* State mẫu ban đầu */
 const initialState = {
   items: [
-    { id: nanoid(), title: 'This is an example of task #1', content: '', status: 'done', createdAt: nowISO(), updatedAt: nowISO() },
-    { id: nanoid(), title: 'This is an example of task #2', content: '', status: 'todo', createdAt: nowISO(), updatedAt: nowISO() },
-    { id: nanoid(), title: 'This is an example of task #3', content: '', status: 'done', createdAt: nowISO(), updatedAt: nowISO() },
-    { id: nanoid(), title: 'This is an example of task #4', content: '', status: 'todo', createdAt: nowISO(), updatedAt: nowISO() },
-    { id: nanoid(), title: 'This is an example of task #5', content: '', status: 'todo', createdAt: nowISO(), updatedAt: nowISO() },
+    { id: nanoid(), 
+      title: 'This is an example of task #1', 
+      content: '', status: 'done', 
+      createdAt: nowISO(), 
+      updatedAt: nowISO() },
+    { id: nanoid(), 
+      title: 'This is an example of task #2', 
+      content: '', 
+      status: 'todo', 
+      createdAt: nowISO(), 
+      updatedAt: nowISO() },
+    { id: nanoid(), 
+      title: 'This is an example of task #3', 
+      content: '', status: 'done', 
+      createdAt: nowISO(), 
+      updatedAt: nowISO() },
+    { id: nanoid(), 
+      title: 'This is an example of task #4', 
+      content: '', status: 'todo', 
+      createdAt: nowISO(), 
+      updatedAt: nowISO() },
+    { id: nanoid(), 
+      title: 'This is an example of task #5', 
+      content: '', 
+      status: 'todo', 
+      createdAt: nowISO(), 
+      updatedAt: nowISO() },
   ],
 };
 /* Slice quản lý todos */
@@ -18,7 +40,7 @@ const todosSlice = createSlice({
   name: 'todos',
   initialState,
   reducers: {
-    /** 
+    /*
      * Thêm một task mới
      * - Thêm vào đầu mảng (unshift)
      * - Sử dụng prepare để tạo payload chuẩn (có id, title, content, thời gian)

@@ -1,17 +1,14 @@
 // Sử dụng Redux để dispatch các action thay đổi state todo
 import { useDispatch } from 'react-redux';
 import { removeTodo, toggleStatus, updateTodo } from '../redux/todosSlice';
-
 // dayjs dùng để hiển thị thời gian tương đối (x phút trước, x ngày trước)
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
-
-/**
+/*
  * TodoItem
  * - Hiển thị một todo đơn lẻ với nút toggle trạng thái, nút xóa,
  *   và tiêu đề có thể chỉnh sửa trực tiếp (contentEditable).
- *
  * Props:
  *   - todo: { id: string | number, title: string, status: 'done' | 'open', updatedAt: number | string }
  *   - compact: boolean (mặc định false) để áp dụng style gọn hơn trong phone preview
@@ -19,14 +16,11 @@ dayjs.extend(relativeTime);
 export default function TodoItem({ todo, compact = false }) {
   // Lấy hàm dispatch từ Redux để gửi action
   const dispatch = useDispatch();
-
   // Toggle trạng thái done/open của todo hiện tại
   const onToggle = () => dispatch(toggleStatus(todo.id));
-
   // Xóa todo hiện tại
   const onDelete = () => dispatch(removeTodo(todo.id));
-
-  /**
+  /*
    * onBlur
    * - Gọi khi người dùng rời focus khỏi tiêu đề (đang contentEditable).
    * - Lấy nội dung mới từ e.target.innerText.
@@ -39,7 +33,7 @@ export default function TodoItem({ todo, compact = false }) {
     }
   };
 
-  /**
+  /*
    * className cho wrapper:
    * - "item": lớp cơ bản cho một dòng todo
    * - "done": thêm khi todo.status === 'done' (để style gạch ngang, đổi màu, v.v.)
@@ -64,8 +58,6 @@ export default function TodoItem({ todo, compact = false }) {
           - suppressContentEditableWarning: tắt cảnh báo React khi dùng contentEditable.
           - onBlur: khi rời focus, nếu text thay đổi sẽ dispatch update.
           - spellCheck=false: tắt kiểm tra chính tả để tránh gạch đỏ.
-          Lưu ý: contentEditable không bị kiểm soát bởi React như input,
-          nên cần cẩn thận khi sync state. Ở đây ta chỉ cập nhật khi onBlur.
         */}
         <div
           className="title"
@@ -77,7 +69,7 @@ export default function TodoItem({ todo, compact = false }) {
           {todo.title}
         </div>
 
-        {/* Thông tin thời gian cập nhật gần nhất, dạng tương đối (vd: updated 5 minutes ago) */}
+        {/* Thông tin thời gian cập nhật gần nhất, dạng tương đối */}
         <div className="meta">
           updated {dayjs(todo.updatedAt).fromNow()}
         </div>

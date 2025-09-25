@@ -1,4 +1,3 @@
-// Import 3 component con dùng chung cho cả bản desktop (card) và bản preview (phone)
 import TodoInput from './components/TodoInput.jsx';
 import TodoList from './components/TodoList.jsx';
 import Stats from './components/Stats.jsx';
@@ -35,19 +34,13 @@ export default function App() {
         </footer>
       </div>
 
-      {/* Cột phải: vùng chứa các phone preview, có scroll RIÊNG (đã cấu hình trong CSS .phone-wrapper) */}
-      <div className="phone-wrapper">
-        {/* Một khung điện thoại 280x560 (bạn có thể copy block .phone này để thêm nhiều preview khác nhau) */}
+      
+      <div className="phone-wrapper">      
         <div className="phone">
-          {/* Nốt ruồi (camera dot) đặt tuyệt đối, chỉ để trang trí — không chiếm layout nội dung */}
           <div className="phone-notch" />
-
-          {/* Màn hình bên trong phone: có border bo tròn, cuộn nội dung khi dài (overflow-y:auto) */}
           <div className="phone-screen">
-            {/* Header nhỏ gọn trong phone (dùng class "compact" để CSS co chữ/khoảng cách) */}
             <div className="header compact">
               <h1>Your To Do</h1>
-              {/* Chấm tròn trang trí — vẫn là span styled, không dùng icon font */}
               <span className="dot" />
             </div>
 
@@ -61,24 +54,6 @@ export default function App() {
             <Stats compact />
           </div>
         </div>
-
-        {/* 
-          Nếu cần thêm một phone preview nữa (ví dụ giao diện dark mode, theme khác, hoặc state khác),
-          chỉ cần copy block .phone ở trên và dán thêm ở đây:
-          
-        <div className="phone">
-          <div className="phone-notch" />
-          <div className="phone-screen">
-            <div className="header compact">
-              <h1>Your To Do</h1>
-              <span className="dot" />
-            </div>
-            <TodoInput compact />
-            <TodoList compact />
-            <Stats compact />
-          </div>
-        </div>
-        */}
       </div>
     </div>
   );

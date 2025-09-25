@@ -9,14 +9,14 @@
   --radius: 12px;
 
   /* Kích thước phone 6.9" (xấp xỉ ở 96dpi) */
-  --phone-width: 350px;      /* bạn có thể tăng/giảm nếu muốn phóng to/thu nhỏ */
+  --phone-width: 273px;      /* bạn có thể tăng/giảm nếu muốn phóng to/thu nhỏ */
 
   /* Viền trong phone-screen */
   --screen-gutter: 4px;      /* padding trong màn hình */
   --screen-border: .5px;     /* viền rất mảnh */
 }
 
-/*  Reset & Base */
+/* Reset & Base */
 *{ box-sizing: border-box; }
 html,body,#root{ height:100%; }
 body{
@@ -26,7 +26,7 @@ body{
   color: var(--text);
 }
 
-/*3) Layout tổng*/
+/*Layout tổng*/
 .page{
   min-height:100%;
   display:flex;
@@ -55,7 +55,7 @@ body{
   padding-right:8px;          /* chừa 1 chút để không che viền phải */
 }
 
-/* ---------- PHONE: tỉ lệ 19.5:9, KHÔNG còn nền bezel ---------- */
+/*PHONE: tỉ lệ 19.5:9 */
 .phone{
   --phone-w: 273px;           /* ~6.9" ở 96dpi; chỉnh nếu muốn lớn/nhỏ hơn */
 
@@ -64,8 +64,6 @@ body{
   position: relative;
   overflow: hidden;
   flex-shrink: 0;
-
-  /* BỎ khung background + bezel + bóng */
   background: transparent;
   padding: 0;
   border-radius: 34px;        /* bo giống màn hình bên trong */
