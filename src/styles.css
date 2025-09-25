@@ -1,0 +1,367 @@
+/* CSS Variables */
+:root{
+  --bg:#f3f4f6;
+  --card:#ffffff;
+  --muted:#9aa2ad;
+  --text:#1f2937;
+  --ring:#e5e7eb;
+  --shadow: 0 10px 25px rgba(0,0,0,.08);
+  --radius: 12px;
+
+  /* Kích thước phone 6.9" (xấp xỉ ở 96dpi) */
+  --phone-width: 350px;      /* bạn có thể tăng/giảm nếu muốn phóng to/thu nhỏ */
+
+  /* Viền trong phone-screen */
+  --screen-gutter: 4px;      /* padding trong màn hình */
+  --screen-border: .5px;     /* viền rất mảnh */
+}
+
+/*  Reset & Base */
+*{ box-sizing: border-box; }
+html,body,#root{ height:100%; }
+body{
+  margin:0;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  background: linear-gradient(#eee,#fafafa);
+  color: var(--text);
+}
+
+/*3) Layout tổng*/
+.page{
+  min-height:100%;
+  display:flex;
+  align-items:flex-start;      /* canh TOP để không tụt khi một bên cao */
+  justify-content:center;
+  gap:48px;
+  padding:24px;
+}
+
+.card{
+  width:min(640px, 90vw);
+  background:var(--card);
+  border-radius:20px;
+  padding:28px;
+  box-shadow: var(--shadow);
+  border:1px solid var(--ring);
+}
+.phone-wrapper{
+  display:flex;
+  flex-wrap:wrap;             /* nhiều phone thì tự xuống dòng */
+  gap:32px;
+  justify-content:center;
+  align-items:flex-start;
+  max-height:100vh;           /* không cao hơn viewport */
+  overflow:auto;              /* scroll RIÊNG khu phone */
+  padding-right:8px;          /* chừa 1 chút để không che viền phải */
+}
+
+/* ---------- PHONE: tỉ lệ 19.5:9, KHÔNG còn nền bezel ---------- */
+.phone{
+  --phone-w: 273px;           /* ~6.9" ở 96dpi; chỉnh nếu muốn lớn/nhỏ hơn */
+
+  width: var(--phone-w);
+  aspect-ratio: 9 / 19.5;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+
+  /* BỎ khung background + bezel + bóng */
+  background: transparent;
+  padding: 0;
+  border-radius: 34px;        /* bo giống màn hình bên trong */
+  box-shadow: none;
+}
+
+/*NOTCH kiểu  */
+.phone-notch{
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 10px;                        /* nằm sát mép trên */
+  width: 64px;
+  height: 14px;
+  background: #000;
+  border-radius: 999px;
+  z-index: 3;
+  /* nhẹ nhàng 1 chút để tách khỏi nền trắng */
+  box-shadow: 0 2px 6px rgba(0,0,0,.25);
+}
+/* chấm camera nhỏ trong pill */
+.phone-notch::after{
+  content: "";
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px; height: 6px;
+  background: #111;
+  border-radius: 50%;
+}
+
+/*  vùng chứa nhiều phone có scroll riêng  */
+.phone-wrapper{
+  display:flex;
+  flex-wrap:wrap;
+  gap:32px;
+  justify-content:center;
+  align-items:flex-start;
+  max-height:100vh;
+  overflow:auto;
+  padding-right:8px;
+}
+
+/* PHONE: 6.9" ~273px, tỉ lệ 19.5:9, có bezel đen */
+.phone{
+  --phone-w: 273px;
+
+  width: var(--phone-w);
+  aspect-ratio: 9 / 19.5;
+  background: #0d0e10;             /* viền bezel đen ngoài */
+  border-radius: 44px;             /* bo tròn khung ngoài */
+  padding: 7px;                    /* độ dày bezel */
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+
+  /* bóng khung ngoài */
+  box-shadow:
+    0 12px 28px rgba(0,0,0,.28),
+    inset 0 2px 6px rgba(255,255,255,.06),
+    inset 0 -2px 6px rgba(0,0,0,.25);
+}
+
+/* ---------- NOTCH kiểu “pill” (Dynamic Island) ---------- */
+.phone-notch{
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 14px;
+  width: 75px;
+  height: 18px;
+  background: #000;
+  border-radius: 999px;
+  z-index: 3;
+  box-shadow:
+    0 0 0 2px #0d0e10,
+    0 4px 8px rgba(0,0,0,.35);
+}
+.phone-notch::after{
+  content: "";
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px; height: 6px;
+  background: #111;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(255,255,255,.06) inset;
+}
+
+/* MÀN HÌNH BÊN TRONG */
+.phone-screen{
+  --screen-gutter: 6px;
+  --screen-border: .5px;
+
+  background: #fff;
+  border-radius: 34px;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  padding: var(--screen-gutter);
+  border: var(--screen-border) solid #e9ecf0;
+
+  /* vẫn cho cuộn nội dung dài nhưng ẩn hẳn thanh cuộn */
+  overflow-y: auto;
+  overflow-x: hidden;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.phone-screen::-webkit-scrollbar{
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+/* Header trong phone: tránh chạm notch */
+.phone-screen .header.compact{
+  margin-top: 28px;               
+}
+.phone-screen .header.compact h1{
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: .1px;
+}
+.phone-screen .header .dot{ width: 22px; height: 22px; }
+
+/*  Form + List compact  */
+.phone-screen .add{ display:flex; gap: 6px; margin-bottom: 10px; }
+.phone-screen .add input{
+  height: 28px;
+  font-size: 13px;
+  border-radius: 10px;
+  border: 1px solid #e6e9ee;
+  background: #f9fafb;
+  padding: 0 10px;
+}
+.phone-screen .icon-btn{
+  width: 28px; height: 28px;
+  border-radius: 8px;
+  border: 1px solid #e6e9ee;
+  background: #111; color: #fff;
+}
+
+/* list item dạng viên thuốc */
+.phone-screen .list{ display:flex; flex-direction:column; gap: 10px; margin-top: 8px; }
+.phone-screen .list .item{
+  padding: 8px 10px;
+  border-radius: 999px;
+  background: #fff;
+  border: 1px solid #e8ebf1;
+  box-shadow: 0 2px 5px rgba(0,0,0,.06);
+}
+.phone-screen .item .title{ font-size: 13px; }
+.phone-screen .meta{ font-size: 12px; color:#8c95a3; }
+
+/* Bỏ fade/bong bóng mép trên & dưới */
+.phone-screen::before,
+.phone-screen::after{
+  content: none !important;
+  display: none !important;
+}
+
+
+
+/* --------------------------------------------------------
+   7) Header / Input / Task list (bên ngoài)
+   -------------------------------------------------------- */
+.header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:14px;
+}
+.header h1{
+  font-size:22px;
+  margin:0;
+  color:var(--text);
+  font-weight:700;
+}
+.header .dot{
+  width:28px; height:28px;
+  background:#f3f4f6;
+  border-radius:50%;
+  border:1px solid var(--ring);
+}
+
+.add{
+  display:flex;
+  gap:8px;
+  margin-bottom:12px;
+}
+.add input{
+  flex:1;
+  height:36px;
+  border-radius:999px;
+  border:1px solid var(--ring);
+  padding:0 14px;
+  outline:none;
+  background:#f9fafb;
+}
+.add input:focus{
+  border-color:#cbd5e1;
+  background:#fff;
+}
+.icon-btn{
+  width:36px; height:36px;
+  border-radius:999px;
+  border:1px solid var(--ring);
+  background:#111; color:#fff;
+  cursor:pointer;
+}
+.icon-btn:active{ transform:scale(0.98); }
+
+.list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  margin-top:8px;
+}
+.item{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:8px 10px;
+  background:#fff;
+  border:1px solid var(--ring);
+  border-radius:999px;
+  box-shadow:0 2px 6px rgba(0,0,0,.03);
+}
+.item.done .title{
+  text-decoration:line-through;
+  color:#6b7280;
+}
+.check{
+  width:28px; height:28px;
+  border-radius:50%;
+  border:1px solid var(--ring);
+  background:#fff;
+  cursor:pointer;
+}
+.content{ flex:1; min-width:0; }
+.title{
+  font-size:14px; color:var(--text);
+  outline:none;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.meta{ font-size:12px; color:#9aa2ad; }
+.close{
+  width:28px; height:28px;
+  border:1px solid var(--ring);
+  border-radius:50%;
+  background:#fff;
+  cursor:pointer;
+}
+.muted{ color:#9aa2ad; font-size:14px; padding:8px; }
+
+/* --------------------------------------------------------
+   8) Stats + Quote
+   -------------------------------------------------------- */
+.stats{
+  margin-top:12px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  color:#4b5563;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.text-btn{
+  background:transparent;
+  border:none;
+  color:#2563eb;
+  cursor:pointer;
+  padding:6px 8px;
+  border-radius:8px;
+}
+.text-btn:hover{ background:#eef2ff; }
+.quote{
+  margin-top:8px;
+  color:#6b7280;
+  font-size:12px;
+}
+
+/* --------------------------------------------------------
+   9) Responsive
+   -------------------------------------------------------- */
+@media (max-width:1000px){
+  .page{ flex-direction:column; gap:24px; }
+  .card{ width:min(680px, 92vw); }
+}
+@media (max-width:420px){
+  .card{ padding:20px; }
+  .header h1{ font-size:20px; }
+  .add input{ height:34px; }
+}
