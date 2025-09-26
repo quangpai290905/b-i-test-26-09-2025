@@ -1,60 +1,56 @@
-import TodoInput from './components/TodoInput.jsx';
-import TodoList from './components/TodoList.jsx';
-import Stats from './components/Stats.jsx';
+// src/App.jsx
+import { BrowserRouter, Routes, Route, Navigate, Outlet } from "react-router-dom";
+import { useSelector } from "react-redux";
+
+import AuthLayout from "./routes/AuthLayout";
+import Home from "./routes/Home";
+import Login from "./routes/Login.jsx";
+import Register from "./routes/Register.jsx";
+import { selectIsAuthenticated } from "./redux/authSlice";
+
+/** Chỉ cho phép vào khi đã đăng nhập */
+function RequireAuth() {
+  const isAuth = useSelector(selectIsAuthenticated);
+  return isAuth ? <Outlet /> : <Navigate to="/login" replace />;
+}
+
+/** Chỉ cho phép vào khi CHƯA đăng nhập (login/register) */
+function GuestOnly() {
+  const isAuth = useSelector(selectIsAuthenticated);
+  return isAuth ? <Navigate to="/" replace /> : <Outlet />;
+}
 
 export default function App() {
   return (
-    // Khối bố cục tổng: gồm 2 cột — bên trái là .card, bên phải là .phone-wrapper (khu preview)
-    <div className="page">
-      {/* Cột trái: khu làm việc chính trên desktop */}
-      <div className="card">
-        {/* Header lớn trên card */}
-        <header className="header">
-          {/* Tiêu đề app */}
-          <h1>Your To Do</h1>
-          {/* Chấm tròn bên phải tiêu đề: chỉ là một span styled bằng CSS, không phải icon */}
-          <span className="dot" />
-        </header>
+    <BrowserRouter>
+      <Routes>
+        {/* Nhóm trang Auth: login/register + layout có phonescreen */}
+        <Route element={<GuestOnly />}>
+          <Route element={<AuthLayout />}>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+          </Route>
+        </Route>
 
-        {/* Ô nhập + nút thêm task cho bản desktop */}
-        <TodoInput />
+        {/* Nhóm trang cần đăng nhập */}
+        <Route element={<RequireAuth />}>
+          <Route path="/" element={<Home />} />
+        </Route>
 
-        {/* Danh sách task cho bản desktop */}
-        <TodoList />
-
-        {/* Thống kê (đã hoàn thành / tổng số, nút clear, v.v.) cho bản desktop */}
-        <Stats />
-
-        {/* Quote (châm ngôn) ở cuối card */}
-        <footer className="quote">
-          <em>
-            “Doing what you love is the cornerstone of having abundance in your life.”
-          </em>{" "}
-          — Wayne Dyer
-        </footer>
-      </div>
-
-      
-      <div className="phone-wrapper">      
-        <div className="phone">
-          <div className="phone-notch" />
-          <div className="phone-screen">
-            <div className="header compact">
-              <h1>Your To Do</h1>
-              <span className="dot" />
-            </div>
-
-            {/* Bản thu gọn của input: truyền prop compact để các component con tự chỉnh kích thước/padding trong phone */}
-            <TodoInput compact />
-
-            {/* Danh sách task hiển thị trong phone — đồng bộ dữ liệu với bản desktop nếu các component đọc cùng store/state */}
-            <TodoList compact />
-
-            {/* Thống kê trong phone — cũng nhận prop compact để hiển thị gọn hơn */}
-            <Stats compact />
-          </div>
-        </div>
-      </div>
-    </div>
+        {/* Fallback: về Home nếu đã login, ngược lại về /login */}
+        <Route
+          path="*"
+          element={
+            <AuthGate />
+          }
+        />
+      </Routes>
+    </BrowserRouter>
   );
+}
+
+/** Route fallback nhỏ: quyết định điều hướng dựa trên trạng thái đăng nhập */
+function AuthGate() {
+  const isAuth = useSelector(selectIsAuthenticated);
+  return <Navigate to={isAuth ? "/" : "/login"} replace />;
 }

@@ -1,29 +1,42 @@
-// src/store.js
-import { configureStore, combineReducers } from '@reduxjs/toolkit';
-import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
-import todosReducer from './redux/todosSlice';
+import { configureStore } from '@reduxjs/toolkit';
+import storage from 'redux-persist/lib/storage';                // localStorage
+import { persistStore, persistReducer } from 'redux-persist';
+import authReducer from './authSlice';
 
-const rootReducer = combineReducers({
-  todos: todosReducer,
-});
-
+/**
+ * Persist config:
+ * - key: 'root' → khoá chính trong localStorage
+ * - storage: localStorage
+ * - whitelist: chỉ lưu slice 'auth' (bên trong có users + todos theo user)
+ *   → không còn cần todosSlice riêng
+ */
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['todos'],
+  whitelist: ['auth'],
 };
 
-const persisted = persistReducer(persistConfig, rootReducer);
+/**
+ * Thay vì combineReducers rồi bọc cả root,
+ * ta persist trực tiếp slice 'auth' cho gọn:
+ * - persistedAuthReducer sẽ tự đọc/ghi vào localStorage
+ */
+const persistedAuthReducer = persistReducer(persistConfig, authReducer);
 
+/**
+ * Tạo store:
+ * - reducer: chỉ có 1 slice là 'auth'
+ * - serializableCheck: tắt cảnh báo đặc thù của redux-persist
+ */
 export const store = configureStore({
-  reducer: persisted,
+  reducer: {
+    auth: persistedAuthReducer,
+  },
   middleware: (getDefault) =>
     getDefault({
-      serializableCheck: {
-        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-      },
+      serializableCheck: false,
     }),
 });
 
+/** persistor: dùng cho <PersistGate> trong main.jsx */
 export const persistor = persistStore(store);

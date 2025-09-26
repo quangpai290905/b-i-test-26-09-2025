@@ -1,49 +1,22 @@
-import { createSlice, createSelector } from '@reduxjs/toolkit';
-import { nanoid } from 'nanoid';
-import dayjs from 'dayjs';
+// src/redux/todosSlice.js
+import { createSlice, createSelector } from "@reduxjs/toolkit";
+import { nanoid } from "nanoid";
+import dayjs from "dayjs";
+
 /* Helper: trả về thời gian hiện tại dạng ISO string */
 const nowISO = () => dayjs().toISOString();
-/* State mẫu ban đầu */
+
+/* State khởi tạo */
 const initialState = {
-  items: [
-    { id: nanoid(), 
-      title: 'This is an example of task #1', 
-      content: '', status: 'done', 
-      createdAt: nowISO(), 
-      updatedAt: nowISO() },
-    { id: nanoid(), 
-      title: 'This is an example of task #2', 
-      content: '', 
-      status: 'todo', 
-      createdAt: nowISO(), 
-      updatedAt: nowISO() },
-    { id: nanoid(), 
-      title: 'This is an example of task #3', 
-      content: '', status: 'done', 
-      createdAt: nowISO(), 
-      updatedAt: nowISO() },
-    { id: nanoid(), 
-      title: 'This is an example of task #4', 
-      content: '', status: 'todo', 
-      createdAt: nowISO(), 
-      updatedAt: nowISO() },
-    { id: nanoid(), 
-      title: 'This is an example of task #5', 
-      content: '', 
-      status: 'todo', 
-      createdAt: nowISO(), 
-      updatedAt: nowISO() },
-  ],
+  items: [], // danh sách todos
 };
-/* Slice quản lý todos */
+
 const todosSlice = createSlice({
-  name: 'todos',
+  name: "todos",
   initialState,
   reducers: {
-    /*
-     * Thêm một task mới
-     * - Thêm vào đầu mảng (unshift)
-     * - Sử dụng prepare để tạo payload chuẩn (có id, title, content, thời gian)
+    /**
+     * Thêm task mới vào đầu danh sách
      */
     addTodo: {
       reducer(state, action) {
@@ -54,72 +27,93 @@ const todosSlice = createSlice({
         return {
           payload: {
             id: nanoid(),
-            title: title?.trim() || 'Untitled',
-            content: content?.trim() || '',
-            status: 'todo',
+            title: title?.trim() || "Untitled",
+            content: content?.trim() || "",
+            status: "todo", // mặc định chưa hoàn thành
             createdAt: time,
             updatedAt: time,
           },
         };
       },
     },
-    /** Đổi trạng thái một task (done <-> todo) */
+
+    /**
+     * Đổi trạng thái 1 task (todo <-> done)
+     */
     toggleStatus(state, action) {
-      const t = state.items.find((i) => i.id === action.payload);
-      if (t) {
-        t.status = t.status === 'done' ? 'todo' : 'done';
-        t.updatedAt = nowISO();
+      const todo = state.items.find((t) => t.id === action.payload);
+      if (todo) {
+        todo.status = todo.status === "done" ? "todo" : "done";
+        todo.updatedAt = nowISO();
       }
     },
-    /** Cập nhật tiêu đề/nội dung của một task */
+
+    /**
+     * Cập nhật title hoặc content của 1 task
+     */
     updateTodo(state, action) {
       const { id, title, content } = action.payload;
-      const t = state.items.find((i) => i.id === id);
-      if (t) {
-        if (typeof title === 'string') t.title = title.trim();
-        if (typeof content === 'string') t.content = content.trim();
-        t.updatedAt = nowISO();
+      const todo = state.items.find((t) => t.id === id);
+      if (todo) {
+        if (title !== undefined) todo.title = title.trim();
+        if (content !== undefined) todo.content = content.trim();
+        todo.updatedAt = nowISO();
       }
     },
-    /** Xóa một task theo id */
+
+    /**
+     * Xoá 1 task theo id
+     */
     removeTodo(state, action) {
-      state.items = state.items.filter((i) => i.id !== action.payload);
+      state.items = state.items.filter((t) => t.id !== action.payload);
     },
-    /** Xóa tất cả các task đã hoàn thành */
+
+    /**
+     * Xoá toàn bộ task đã hoàn thành
+     */
     clearDone(state) {
-      state.items = state.items.filter((i) => i.status !== 'done');
+      state.items = state.items.filter((t) => t.status !== "done");
     },
-    /** Đánh dấu tất cả thành hoàn thành */
+
+    /**
+     * Đánh dấu tất cả thành "done"
+     */
     markAllDone(state) {
       const time = nowISO();
       state.items.forEach((t) => {
-        t.status = 'done';
+        t.status = "done";
         t.updatedAt = time;
       });
     },
-    /** Đưa tất cả về chưa hoàn thành */
+
+    /**
+     * Đưa tất cả về "todo"
+     */
     markAllTodo(state) {
       const time = nowISO();
       state.items.forEach((t) => {
-        t.status = 'todo';
+        t.status = "todo";
         t.updatedAt = time;
       });
     },
-    /** Toggle tất cả: 
-     * - Nếu còn ít nhất 1 task chưa xong => set tất cả thành done
-     * - Nếu tất cả đã done => revert tất cả về todo
+
+    /**
+     * Toggle tất cả:
+     * - Nếu còn ít nhất 1 task chưa xong => set tất cả thành "done"
+     * - Nếu tất cả đã done => revert về "todo"
      */
     toggleAll(state) {
-      const hasTodo = state.items.some((t) => t.status !== 'done');
+      const hasTodo = state.items.some((t) => t.status !== "done");
       const time = nowISO();
       state.items.forEach((t) => {
-        t.status = hasTodo ? 'done' : 'todo';
+        t.status = hasTodo ? "done" : "todo";
         t.updatedAt = time;
       });
     },
   },
 });
-/* Export actions để dùng trong component */
+
+/* Export actions */
 export const {
   addTodo,
   toggleStatus,
@@ -133,13 +127,18 @@ export const {
 
 /* Export reducer mặc định */
 export default todosSlice.reducer;
-/** Lấy toàn bộ danh sách task */
-export const selectTodos = (s) => s.todos.items;
+
+/* -------------------- Selectors -------------------- */
+
+/** Lấy toàn bộ todos */
+export const selectTodos = (state) => state.todos.items;
+
 /** Đếm số task chưa hoàn thành */
 export const selectRemaining = createSelector([selectTodos], (items) =>
-  items.filter((i) => i.status !== 'done').length
+  items.filter((t) => t.status !== "done").length
 );
+
 /** Kiểm tra xem tất cả task đã hoàn thành chưa */
 export const selectAllDone = createSelector([selectTodos], (items) =>
-  items.length > 0 && items.every((i) => i.status === 'done')
+  items.length > 0 && items.every((t) => t.status === "done")
 );
